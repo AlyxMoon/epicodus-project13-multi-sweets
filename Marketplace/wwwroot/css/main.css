@@ -1,0 +1,20 @@
+.password-toggle {
+  position: absolute;
+  right: 1.2em;
+  top: -0.2em;
+
+  background: transparent;
+  border: none;
+  
+  font-size: 2em;
+}
+
+.password-toggle:hover .bi-eye,
+.password-toggle:hover .bi-eye-slash {
+  display: none;
+}
+
+.password-toggle:not(:hover) .bi-eye-fill,
+.password-toggle:not(:hover) .bi-eye-slash-fill {
+  display: none;
+}
