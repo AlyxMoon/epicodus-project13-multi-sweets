@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using Marketplace.Models;
 
 namespace Marketplace.Models.Database
 {
-  public class DatabaseContext : DbContext
+  public class DatabaseContext : IdentityDbContext<ApplicationUser>
   {
     public DbSet<Flavor> Flavors { get; set; }
     public DbSet<Treat> Treats { get; set; }

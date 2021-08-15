@@ -39,7 +39,7 @@ namespace Marketplace.Controllers
       };
       IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
-      return result.Succeeded ? RedirectToAction("Index") : View();
+      return result.Succeeded ? RedirectToAction("Login", "Home") : View();
     }
 
     public ActionResult Login()
