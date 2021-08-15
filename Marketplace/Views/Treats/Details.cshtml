@@ -1,5 +1,13 @@
 @model Marketplace.Models.Treat
 
-<h2>Book: @Model.Name</h2>
+<h2>Treat: @Model.Name</h2>
+
+<a 
+  asp-controller="Treats" 
+  asp-action="Edit" 
+  asp-route-id="@Model.TreatId"
+  class="btn btn-info"
+>Edit</a>
+
 
 <p>@Model.Description</p>
