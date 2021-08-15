@@ -1,0 +1,47 @@
+@using Marketplace.Models
+@model System.Collections.Generic.List<Flavor>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @if (Model.Count == 0)
+    {
+      <tr><td colspan="2">No flavors yet, go add some!</td></tr>
+    }
+    
+    @foreach (Flavor flavor in Model)
+    {
+      <tr>
+        <td>
+          <a
+            asp-controller="Flavors"
+            asp-action="Details"
+            asp-route-flavorId="@flavor.FlavorId"
+            class="btn btn-primary btn-sm"
+          >See Details</a>
+
+          <a
+            asp-controller="Flavors"
+            asp-action="Edit"
+            asp-route-flavorId="@flavor.FlavorId"
+            class="btn btn-secondary btn-sm"
+          >Edit</a>
+
+          <a
+            asp-controller="Flavors"
+            asp-action="Delete"
+            asp-route-flavorId="@flavor.FlavorId"
+            class="btn btn-danger btn-sm"
+          >Delete</a>
+        </td>
+        <td>@flavor.Name</td>
+      </tr>
+    }
+  </tbody>
+</table>
