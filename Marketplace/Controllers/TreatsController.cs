@@ -9,6 +9,7 @@ using Marketplace.Models.Database;
 
 namespace Marketplace.Controllers
 {
+  [Route("/treats")]
   public class TreatsController : Controller
   {
     private readonly DatabaseContext _db;
@@ -18,53 +19,61 @@ namespace Marketplace.Controllers
       _db = db;
     }
 
+    [HttpGet]
     public ActionResult Index()
     {
       List<Treat> model = _db.Treats.ToList();
       return View(model);
     }
 
-    public ActionResult Details (int id)
-    {
-      Treat treat = _db.Treats.FirstOrDefault(flavor => flavor.TreatId == id);
-      return View(treat);
-    }
-
-    public ActionResult Create()
+    [HttpGet("new")]
+    public ActionResult AddNew()
     {
       return View();
     }
 
     [HttpPost]
-    public ActionResult Create(Treat treat)
+    public ActionResult Create (Treat treat)
     {
       _db.Treats.Add(treat);
       _db.SaveChanges();
       return RedirectToAction("Index");
     }
 
-    public ActionResult Edit(int id)
+    [HttpGet("{id}")]
+    public ActionResult Details (int id)
+    {
+      Treat treat = _db.Treats
+        .Include(treat => treat.Flavors)
+        .SingleOrDefault(item => item.TreatId == id);      
+
+      IEnumerable<Flavor> flavors = _db.Flavors
+        .AsEnumerable()
+        .Where(flavor => treat.Flavors.All(flavorTreat => 
+          flavorTreat.FlavorId != flavor.FlavorId
+        ));
+
+      ViewBag.FlavorOptions = new SelectList(flavors, "FlavorId", "Name");
+
+      return View(treat);
+    }
+
+    [HttpGet("{id}/edit")]
+    public ActionResult Edit (int id)
     {
       Treat treat = _db.Treats.FirstOrDefault(treat => treat.TreatId == id);
       return View(treat);
     }
 
-    [HttpPost]
-    public ActionResult Edit(Treat treat)
+    [HttpPost("{id}")]
+    public ActionResult EditPost (Treat treat)
     {
       _db.Entry(treat).State = EntityState.Modified;
       _db.SaveChanges();
       return RedirectToAction("Index");
     }
 
-    public ActionResult AddFlavor (int id)
-    {
-      Treat treat = _db.Treats.FirstOrDefault(treat => treat.TreatId == id);
-      ViewBag.FlavorOptions = new SelectList(_db.Flavors, "FlavorId", "Name");
-      return View(treat);
-    }
-
-    [HttpPost]
+    [HttpPost("{treatId}/flavors/add")]
     public ActionResult AddFlavor (int treatId, int flavorId)
     {
       Treat treat = _db.Treats
@@ -77,9 +86,10 @@ namespace Marketplace.Controllers
       treat.Flavors.Add(flavor);
       _db.SaveChanges();
 
-      return RedirectToAction("Index");
+      return RedirectToAction("Details", new { id = treatId });
     }
 
+    [HttpGet("{id}/delete")]
     public ActionResult Delete (int id)
     {
       Treat treat = _db.Treats.FirstOrDefault(treat => treat.TreatId == id);
@@ -89,7 +99,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpPost]
+    [HttpGet("{treatId}/flavors/delete/{flavorId}")]
     public ActionResult DeleteFlavor (int treatId, int flavorId)
     {
       Treat treat = _db.Treats
@@ -101,7 +111,8 @@ namespace Marketplace.Controllers
 
       treat.Flavors.Remove(flavor);
       _db.SaveChanges();
-      return RedirectToAction("Index");
+      
+      return RedirectToAction("Details", new { id = treatId });
     }
   }
 }

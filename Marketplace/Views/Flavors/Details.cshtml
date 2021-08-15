@@ -1,4 +1,7 @@
 @model Marketplace.Models.Flavor
+@{
+  ViewBag.FlavorId = Model.FlavorId;
+}
 
 <h2>Flavor: @Model.Name</h2>
 
@@ -10,3 +13,30 @@
 >Edit</a>
 
 <p>@Model.Description</p>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Treats with this flavor</h2>
+  </div>
+
+  <div class="card-body">
+    <form 
+      asp-controller="Flavors"
+      asp-action="AddTreat"
+      asp-route-flavorId="@Model.FlavorId"
+    >
+      <div class="input-group">
+        <button type="submit" class="btn btn-primary">Add Treat</button>
+        <select
+          asp-items="@ViewBag.TreatOptions"
+          name="treatId"
+          class="form-select"
+          required
+        ></select>
+      </div>
+    </form>
+
+    <partial name="_LinkedTreatsTable.cshtml" model="@Model.Treats" />
+  </div>
+</div>
+
