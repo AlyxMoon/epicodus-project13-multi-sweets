@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 using Marketplace.Models;
 using Marketplace.Models.Database;
@@ -13,9 +15,14 @@ namespace Marketplace.Controllers
   public class TreatsController : Controller
   {
     private readonly DatabaseContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public TreatsController (DatabaseContext db)
+    public TreatsController (
+      UserManager<ApplicationUser> userManager,
+      DatabaseContext db
+    )
     {
+      _userManager = userManager;
       _db = db;
     }
 
@@ -26,12 +33,14 @@ namespace Marketplace.Controllers
       return View(model);
     }
 
+    [Authorize]
     [HttpGet("new")]
     public ActionResult AddNew()
     {
       return View();
     }
 
+    [Authorize]
     [HttpPost]
     public ActionResult Create (Treat treat)
     {
@@ -58,6 +67,7 @@ namespace Marketplace.Controllers
       return View(treat);
     }
 
+    [Authorize]
     [HttpGet("{id}/edit")]
     public ActionResult Edit (int id)
     {
@@ -65,6 +75,7 @@ namespace Marketplace.Controllers
       return View(treat);
     }
 
+    [Authorize]
     [HttpPost("{id}")]
     public ActionResult EditPost (Treat treat)
     {
@@ -73,6 +84,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
+    [Authorize]
     [HttpPost("{treatId}/flavors/add")]
     public ActionResult AddFlavor (int treatId, int flavorId)
     {
@@ -89,6 +101,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Details", new { id = treatId });
     }
 
+    [Authorize]
     [HttpGet("{id}/delete")]
     public ActionResult Delete (int id)
     {
@@ -99,6 +112,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
+    [Authorize]
     [HttpGet("{treatId}/flavors/delete/{flavorId}")]
     public ActionResult DeleteFlavor (int treatId, int flavorId)
     {

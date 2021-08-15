@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 using Marketplace.Models;
 using Marketplace.Models.Database;
@@ -13,9 +15,14 @@ namespace Marketplace.Controllers
   public class FlavorsController : Controller
   {
     private readonly DatabaseContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public FlavorsController (DatabaseContext db)
+    public FlavorsController (
+      UserManager<ApplicationUser> userManager,
+      DatabaseContext db
+    )
     {
+      _userManager = userManager;
       _db = db;
     }
 
@@ -26,13 +33,14 @@ namespace Marketplace.Controllers
       return View(model);
     }
   
-
+    [Authorize]
     [HttpGet("new")]
     public ActionResult AddNew()
     {
       return View();
     }
 
+    [Authorize]
     [HttpPost]
     public ActionResult Create(Flavor flavor)
     {
@@ -41,7 +49,6 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
-    
     [HttpGet("{id}")]
     public ActionResult Details (int id)
     {
@@ -60,6 +67,7 @@ namespace Marketplace.Controllers
       return View(flavor);
     }
 
+    [Authorize]
     [HttpGet("{id}/edit")]
     public ActionResult Edit(int id)
     {
@@ -67,6 +75,7 @@ namespace Marketplace.Controllers
       return View(flavor);
     }
 
+    [Authorize]
     [HttpPost("{id}")]
     public ActionResult EditPost (Flavor flavor)
     {
@@ -75,6 +84,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
+    [Authorize]
     [HttpPost("{flavorId}/treats/add")]
     public ActionResult AddTreat (int flavorId, int treatId)
     {
@@ -91,6 +101,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Details", new { id = flavorId });
     }
 
+    [Authorize]
     [HttpGet("{id}/delete")]
     public ActionResult Delete (int id)
     {
@@ -101,6 +112,7 @@ namespace Marketplace.Controllers
       return RedirectToAction("Index");
     }
 
+    [Authorize]
     [HttpGet("{flavorId}/treats/remove/{treatId}")]
     public ActionResult DeleteTreat (int flavorId, int treatId)
     {
